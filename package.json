@@ -1,0 +1,50 @@
+{
+  "name": "dsh-official-skin",
+  "version": "1.0.0",
+  "description": "DeepSeek 官网风格皮肤：深蓝宇宙感背景（流体极光 + 粒子鲸鱼 + 星座网格）与浅色玻璃主题，右上角一键切换",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "docs",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek",
+    "skin",
+    "theme",
+    "webgl",
+    "background"
+  ],
+  "license": "MIT",
+  "author": "Klein",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<your-name>/dsh-official-skin.git"
+  },
+  "homepage": "https://github.com/<your-name>/dsh-official-skin#readme",
+  "bugs": {
+    "url": "https://github.com/<your-name>/dsh-official-skin/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
