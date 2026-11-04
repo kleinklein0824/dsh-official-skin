@@ -38,13 +38,14 @@
   "author": "Klein",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-name>/dsh-official-skin.git"
+    "url": "git+https://github.com/kleinklein0824/dsh-official-skin.git"
   },
-  "homepage": "https://github.com/<your-name>/dsh-official-skin#readme",
+  "homepage": "https://github.com/kleinklein0824/dsh-official-skin#readme",
   "bugs": {
-    "url": "https://github.com/<your-name>/dsh-official-skin/issues"
+    "url": "https://github.com/kleinklein0824/dsh-official-skin/issues"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "dsh": "^0.2.1-rc.5"
   }
 }

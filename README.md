@@ -6,9 +6,11 @@
 
 <p>
   <img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg">
-  <img alt="platform" src="https://img.shields.io/badge/platform-DSH%20Web%20%7C%20Electron-6b7cff.svg">
+  <img alt="platform" src="https://img.shields.io/badge/platform-DSH%20Web-6b7cff.svg">
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
+
+> **安装边界：** 当前仅声明支持 DSH Web `^0.2.1-rc.5`，并在 `0.2.1-rc.5` 实机验证。npm 包尚未发布，官方 Desktop 尚未完成实机兼容验证。
 
 ---
 
@@ -72,15 +74,49 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 
 ## 安装
 
-### 方式一：插件市场（发布 npm 之后可用）
+### 支持范围
 
-插件发布到 npm 之后，在 DSH 的 **插件 → 插件市场 → 发现** 里搜索 `dsh-official-skin` 一键安装。
-（市场索引扫的是 npm 上带 `dsh` 字段的包，本地 `link:` 安装不会出现在「发现」里。）
+| 项目 | 状态 |
+| --- | --- |
+| DSH Web | `^0.2.1-rc.5`；其中 `0.2.1-rc.5` 已实机验证 |
+| DSH Desktop | 未验证，不在当前兼容承诺内 |
+| npm | 尚未发布 |
+| Node.js | `>=20` |
 
-### 方式二：本地 link（现在就能用）
+兼容范围同时写在 `package.json` 的 `engines.dsh` 中。不满足该范围时，DSH 插件安装器或启动检查可能拒绝加载。
+
+### 方式一：从 GitHub 安装到 DSH Web（推荐）
 
 ```bash
-cd ~/.dsh/profiles/desktop
+dsh plugin --profile web add "github:kleinklein0824/dsh-official-skin"
+```
+
+安装后重新启动 DSH Web：
+
+```bash
+dsh web
+```
+
+### 方式二：通过皮肤市场安装
+
+先安装并启用 [DSH 皮肤市场](https://github.com/kingOfSoySauce/dsh-skin-market)：
+
+```bash
+dsh plugin --profile web add "dsh-skin-market@latest"
+```
+
+然后在 **设置 → 皮肤市场** 或 **插件 → dsh-skin-market** 中搜索 `DSH 官网风格皮肤`。市场条目固定到已收录的 GitHub commit，不依赖 npm 发布。
+
+### Desktop 与 npm 边界
+
+- **官方 Desktop：** 当前未验证。你仍可在桌面应用的插件安装界面中尝试 GitHub 地址 `github:kleinklein0824/dsh-official-skin`，但安装与启用结果不应视为已支持。
+- **npm：** 当前尚未发布，因此 `dsh plugin --profile web add "dsh-official-skin"` 和 `pnpm add dsh-official-skin` 都不可用。
+- **平台：** 包内声明为 `dsh.client.platform = "web"`。在 Desktop 内嵌的 Web 界面中加载，也不等于已完成 Desktop 实机验收。
+
+### 本地开发
+
+```bash
+cd ~/.dsh/profiles/web
 pnpm add link:"<本仓库的绝对路径>"
 ```
 
@@ -97,6 +133,12 @@ pnpm add link:"<本仓库的绝对路径>"
 ```
 
 重启 DSH 生效。
+
+### 卸载
+
+```bash
+dsh plugin --profile web remove "dsh-official-skin"
+```
 
 ---
 
@@ -153,7 +195,8 @@ dsh-official-skin/
 
 ## 兼容性
 
-- DSH `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）实测通过；
+- DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）已实测通过；
+- DSH Desktop 与 npm 安装尚未验证，不包含在当前兼容承诺内；
 - 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用；
 - 深浅两套都按 `[data-ds-dark-theme]` 判断，不依赖 DSH 的哈希类名，因此小版本升级不容易失效。
 
