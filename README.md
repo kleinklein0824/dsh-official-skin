@@ -10,7 +10,7 @@
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
 
-> **安装边界：** 当前仅声明支持 DSH Web `^0.2.1-rc.5`，并在 `0.2.1-rc.5` 实机验证。npm 包尚未发布，官方 Desktop 尚未完成实机兼容验证。
+> **安装边界：** 当前仅声明支持 DSH Web `^0.2.1-rc.5`，在 `0.2.1-rc.5` 实机验证。npm 包尚未发布，官方 Desktop 尚未完成实机兼容验证；安装方式见[安装](#安装)。
 
 ---
 
@@ -78,24 +78,22 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 
 | 项目 | 状态 |
 | --- | --- |
-| DSH Web | `^0.2.1-rc.5`；其中 `0.2.1-rc.5` 已实机验证 |
+| DSH Web | `^0.2.1-rc.5`；`0.2.1-rc.5` 实测通过 |
 | DSH Desktop | 未验证，不在当前兼容承诺内 |
 | npm | 尚未发布 |
 | Node.js | `>=20` |
 
-兼容范围同时写在 `package.json` 的 `engines.dsh` 中。不满足该范围时，DSH 插件安装器或启动检查可能拒绝加载。
+兼容范围同时写在 `package.json` 的 `engines.dsh` 中。当前版本低于 `0.2.1-rc.5`，或高于 `0.2.x` 时，安装器可能会拒绝加载。
 
-### 方式一：从 GitHub 安装到 DSH Web（推荐）
+### 方式一：DSH Web 直接安装（推荐）
+
+终端执行：
 
 ```bash
 dsh plugin --profile web add "github:kleinklein0824/dsh-official-skin"
 ```
 
-安装后重新启动 DSH Web：
-
-```bash
-dsh web
-```
+安装完成后刷新 DSH Web，或重新执行 `dsh web`。
 
 ### 方式二：通过皮肤市场安装
 
@@ -109,11 +107,13 @@ dsh plugin --profile web add "dsh-skin-market@latest"
 
 ### Desktop 与 npm 边界
 
-- **官方 Desktop：** 当前未验证。你仍可在桌面应用的插件安装界面中尝试 GitHub 地址 `github:kleinklein0824/dsh-official-skin`，但安装与启用结果不应视为已支持。
-- **npm：** 当前尚未发布，因此 `dsh plugin --profile web add "dsh-official-skin"` 和 `pnpm add dsh-official-skin` 都不可用。
-- **平台：** 包内声明为 `dsh.client.platform = "web"`。在 Desktop 内嵌的 Web 界面中加载，也不等于已完成 Desktop 实机验收。
+- **官方 Desktop：** 当前未验证。如需试用，只能在桌面应用的 **插件 → 添加插件** 中输入 `github:kleinklein0824/dsh-official-skin`，安装、启用和重启均按应用提示操作。
+- **npm：** 当前尚未发布，因此 `dsh plugin --profile web add "dsh-official-skin"` 和 `pnpm add dsh-official-skin` 都不可用。请使用上面的 GitHub 安装目标。
+- **平台：** 包内声明为 `dsh.client.platform = "web"`。即使通过 Desktop 的应用内 Web 层加载，也不等于已完成 Desktop 实机验收。
 
 ### 本地开发
+
+仅在调试源码时使用：
 
 ```bash
 cd ~/.dsh/profiles/web
@@ -195,7 +195,7 @@ dsh-official-skin/
 
 ## 兼容性
 
-- DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）已实测通过；
+- DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）实测通过；
 - DSH Desktop 与 npm 安装尚未验证，不包含在当前兼容承诺内；
 - 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用；
 - 深浅两套都按 `[data-ds-dark-theme]` 判断，不依赖 DSH 的哈希类名，因此小版本升级不容易失效。
@@ -233,6 +233,20 @@ Chromium 对同时存在的 WebGL 上下文有上限。本插件已在重载时�
 8. **切换暂停用时间戳闸门**，不要 pause/resume 配对：三条 RAF 在检查闸门前就已排好下一帧，暂停 360ms 后自动恢复，不会「停了没人叫醒」。
 9. **旧实例必须真正回收**：每次 activate 都会重建 canvas + GL 上下文，不释放会触发 `Too many active WebGL contexts`（会丢掉最老的上下文）。
 10. **宿主半边 `apply()` 绝不抛错**：否则 web boot 的 activate 断言会把整页掀成白屏。
+
+---
+
+## 性能（v1.1.0）
+
+皮肤的全部视觉效果保持不变，v1.1.0 只改了「什么时候扫、扫多频、什么时候画」：
+
+- **DOM 扫描合并**：不再对每次 DOM 变更跑全量 `getComputedStyle` + `getBoundingClientRect`。`#root` 上的 MutationObserver 只统计新增节点、标记新气泡/代码块，外壳扫描合并到 400ms 节流；完整穿透（`punchThrough`）只在主题切换、窗口 resize、会话切换与首屏 settle 时执行（≥2s 间隔）。
+- **输入/弹窗期间冻结背景动画**：按键或输入 1.2s 内、弹窗打开、或流式输出高频变更时，极光 / 鲸鱼 / 星座暂停绘制，停手 1.2s 后自动恢复。这样 `backdrop-filter` 区域不再每帧跟着动，打字与流式输出不再抢主线程。
+- **首屏 settle**：0 / 400 / 1500 / 3500 / 6000ms 各跑一次完整扫描，保证启动、切工作区后的玻璃与透明背景一定到位。
+- **生命周期回收**：`window.__dshDsDispose()` 现在会断开所有 observer、清掉所有定时器、还原内联样式与 `data-dsh-skin` 标记，不再叠加泄漏。
+- **可观测**：控制台里 `window.__dshSkinStats` 可看到 `scans / deepScans / lastScanMs / maxScanMs`；URL 加 `?skin=live` 可关闭冻结门控，让背景动画始终满帧运行。
+
+回滚：把 `lib/client.js.bak-20261104-232226` 复制回 `lib/client.js`，然后 `Ctrl+R` 刷新页面。
 
 ---
 
