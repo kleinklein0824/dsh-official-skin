@@ -2,3 +2,5 @@ a7e16f7a18d16eca3e1b94fc9616bf4bbc042aaaa6a4f06d12f10636bbdf750e  dsh-official-s
 eae09f2674d4fc74922cdffe8cf2fad7af9abdc493d7443e5230622daffeab12  dsh-official-skin-1.0.0.tgz
 51f5e33552b90ccc58a9ea578ec62b119b6a1febc0e578f8e1aff7df31336a62  dsh-official-skin-1.1.4.zip
 db4bd96b49c2fb3ae842a262a5295ac094cab000f625500a068dbb52968861ce  dsh-official-skin-1.1.4.tgz
+73c601f2042dd04bc2cbd9d9f97cfca4d1221e936ef136d86ca18973f55101cb  dsh-official-skin-1.1.5.zip
+71545d0196bb79d72127bdf4f241fb24e45d723bc74429462be775ab181e12c5  dsh-official-skin-1.1.5.tgz

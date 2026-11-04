@@ -10,7 +10,7 @@
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
 
-> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。npm 包已发布为 `dsh-official-skin@1.1.4`；安装方式见[安装](#安装)。
+> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。npm 包已发布为 `dsh-official-skin@1.1.5`；安装方式见[安装](#安装)。
 
 ---
 
@@ -80,7 +80,7 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 | --- | --- |
 | DSH Web | `^0.2.1-rc.5`；`0.2.1-rc.5` 实测通过 |
 | DSH Desktop | `^0.2.1-rc.5`；桌面版内嵌 Web 界面实测可用 |
-| npm | `1.1.4` 已发布 |
+| npm | `1.1.5` 已发布 |
 | Node.js | `>=20` |
 
 兼容范围同时写在 `package.json` 的 `engines.dsh` 中。当前版本低于 `0.2.1-rc.5`，或高于 `0.2.x` 时，安装器可能会拒绝加载。
@@ -90,7 +90,7 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 打开 DSH Desktop 后进入 **插件 → 添加插件**，输入：
 
 ```text
-dsh-official-skin@1.1.4
+dsh-official-skin@1.1.5
 ```
 
 确认安装后，按应用提示启用插件，并完全退出、重新打开 DSH Desktop。
@@ -106,7 +106,7 @@ github:kleinklein0824/dsh-official-skin
 终端执行：
 
 ```bash
-dsh plugin --profile web add "dsh-official-skin@1.1.4"
+dsh plugin --profile web add "dsh-official-skin@1.1.5"
 ```
 
 安装完成后刷新 DSH Web，或重新执行 `dsh web`。
@@ -123,7 +123,7 @@ dsh plugin --profile web add "dsh-skin-market@latest"
 
 ### 安装说明
 
-- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.4`，安装、启用和重启均由桌面应用管理。
+- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.5`，安装、启用和重启均由桌面应用管理。
 - **npm：** 已发布到 npm，可通过包名 `dsh-official-skin` 安装；GitHub 安装目标继续保留，作为市场或固定 commit 安装的备用方式。
 - **平台：** 包内声明为 `dsh.client.platform = "web"`，DSH Desktop 使用同一套内嵌 Web 客户端加载皮肤，因此 Web 与 Desktop 共用客户端实现。
 
@@ -214,7 +214,7 @@ dsh-official-skin/
 
 - DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）实测通过；
 - DSH Desktop `^0.2.1-rc.5` 已实测可用，通过应用内嵌 Web 界面加载；
-- npm 包 `dsh-official-skin@1.1.4` 已发布；
+- npm 包 `dsh-official-skin@1.1.5` 已发布；
 - 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用；
 - 深浅两套都按 `[data-ds-dark-theme]` 判断，不依赖 DSH 的哈希类名，因此小版本升级不容易失效。
 
@@ -238,6 +238,7 @@ Chromium 对同时存在的 WebGL 上下文有上限。本插件已在重载时�
 - 切换会话和工作区时优先保证首帧显示，避免不透明底板短暂盖住背景。
 - 深度界面扫描分帧执行，聊天流式输出时不会因反复全量扫描而明显卡顿。
 - 弹窗打开时暂停背景动画，关闭后自动恢复。
+- 输入框玻璃模糊移到独立图层，鼠标停在发送键上时不再持续闪烁。
 - 插件重载时会清理旧实例，避免动画叠层和资源泄漏。
 
 ---
