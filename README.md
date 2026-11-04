@@ -155,6 +155,7 @@ dsh-official-skin/
 │  ├─ preview-dark.png
 │  └─ preview-light.png
 ├─ README.md
+├─ CHANGELOG.md          # 版本变更记录（语义化版本）
 ├─ LICENSE
 └─ .gitignore
 ```
@@ -189,7 +190,7 @@ dsh-official-skin/
 | 切换速度 | `transition: opacity .3s`（四处）、`dsAnimPauseUntil` | 300ms / 360ms |
 | 玻璃强度 | `body:not([data-ds-dark-theme])` 下的 `rgba(255,255,255,…)` | 0.18 ~ 0.20 |
 
-改完 `lib/client.js` 需要**重载页面**（Ctrl+R）或重启应用：客户端代码是页面加载时注入的，热替换不会重新 import。
+改完 `lib/client.js` 需要**重启 DSH 应用**（关闭后重新打开）：客户端代码是页面加载时注入的，桌面端按 Ctrl+R / F5 不会重新 import（实测无效）。
 
 ---
 
@@ -236,17 +237,84 @@ Chromium 对同时存在的 WebGL 上下文有上限。本插件已在重载时�
 
 ---
 
-## 性能（v1.1.0）
+## 性能（v1.1.4）
 
-皮肤的全部视觉效果保持不变，v1.1.0 只改了「什么时候扫、扫多频、什么时候画」：
+皮肤的全部视觉效果保持不变（模糊、玻璃、主题过渡、鲸鱼、极光、星座、兜底穿透都在），只改了「什么时候扫、扫多频、什么时候画」：
 
-- **DOM 扫描合并**：不再对每次 DOM 变更跑全量 `getComputedStyle` + `getBoundingClientRect`。`#root` 上的 MutationObserver 只统计新增节点、标记新气泡/代码块，外壳扫描合并到 400ms 节流；完整穿透（`punchThrough`）只在主题切换、窗口 resize、会话切换与首屏 settle 时执行（≥2s 间隔）。
-- **输入/弹窗期间冻结背景动画**：按键或输入 1.2s 内、弹窗打开、或流式输出高频变更时，极光 / 鲸鱼 / 星座暂停绘制，停手 1.2s 后自动恢复。这样 `backdrop-filter` 区域不再每帧跟着动，打字与流式输出不再抢主线程。
-- **首屏 settle**：0 / 400 / 1500 / 3500 / 6000ms 各跑一次完整扫描，保证启动、切工作区后的玻璃与透明背景一定到位。
-- **生命周期回收**：`window.__dshDsDispose()` 现在会断开所有 observer、清掉所有定时器、还原内联样式与 `data-dsh-skin` 标记，不再叠加泄漏。
-- **可观测**：控制台里 `window.__dshSkinStats` 可看到 `scans / deepScans / lastScanMs / maxScanMs`；URL 加 `?skin=live` 可关闭冻结门控，让背景动画始终满帧运行。
+- **DOM 扫描合并**：不再对每次 DOM 变更跑全量 `getComputedStyle` + `getBoundingClientRect`。`#root` 上的 MutationObserver 只统计新增节点、标记新气泡/代码块；外壳扫描合并到 400ms 节流，完整穿透（`punchThrough`）只在主题切换、窗口 resize、视图切换与首屏 settle 时执行（≥2s 间隔）。
+- **深度扫描分片**：插槽后代与主脊的 `getComputedStyle` + `getBoundingClientRect` 按 4ms/帧切片执行，切换会话 / 工作区时不再一次性按住主线程；真实视图切换仍会先同步做一次「白名单外壳扫描」（约 1-9ms）保证首帧不白闪。
+- **打字不冻结背景**：v1.1.1 移除了「按键盘即暂停动画」的门控 —— 打字时极光 / 鲸鱼 / 星座照常运行；只有弹窗（dialog/menu/listbox）打开时才暂停绘制，关闭即恢复。URL 加 `?skin=live` 可完全关闭该门控。
+- **首屏 settle**：0 / 400 / 1500 / 3500 / 6000ms 各跑一次扫描（首个只做浅扫描，400ms 后才跑完整穿透），启动不再有一次性 100ms+ 的深扫卡顿。
+- **切会话首帧黑块**：切会话 / 工作区时，宿主会先挂一块「载入历史…」骨架；`@deepseek-ai/dsh-client-ui-conversation` 的 `ConversationRoot` 在 `.an3wZg_root` 上铺了不透明的 `var(--dsw-alias-bg-base)`，骨架期会整块盖住会话区，就是黑块。v1.1.4 直接用一条 CSS 把 `.an3wZg_root`（以及 `[class*="_root"][data-phase]` 兜底，防宿主升级后哈希类名变化）透明化 —— CSS 在第一帧就生效，比 MutationObserver 里的 JS 打透更早，画面不再先黑一下；JS 侧的 BFS 深扫与切换后 6 帧复查保留，作为宿主改结构时的第二道保险。
+- **单实例守卫**：DSH 重连 / 客户端插件热重载会重新执行整个 bundle，现在会先调用上一实例的 `dispose`（断开 observer、清定时器、取消 rAF、还原内联样式与 `data-dsh-skin`、移除容器），不会出现「越用越卡、切视图黑块、动画叠层」。
+- **可观测**：控制台 `window.__dshSkinStats` 可看到 `scans / deepScans / lastScanMs / maxScanMs / slow / slowMax / lt / ltMax`（`slow` = 超过 16ms 的扫描次数，`lt` = 长任务次数）；诊断代码只读，不改写 `document.title`。
 
-回滚：把 `lib/client.js.bak-20261104-232226` 复制回 `lib/client.js`，然后 `Ctrl+R` 刷新页面。
+回滚：把 `.backup/client.js.bak-20261104-232226` 复制回 `lib/client.js`，然后在 DSH 里手动重启（关闭后重新打开）。
+
+---
+
+## 版本与发布
+
+### 版本号规则
+
+采用语义化版本 `MAJOR.MINOR.PATCH`：
+
+- **PATCH**：只修 bug / 性能，不改视觉、不改配置
+- **MINOR**：新增可感知能力（新主题、新参数、新 URL 开关）
+- **MAJOR**：需要用户改配置或破坏兼容（例如最低 DSH 版本变化）
+
+### 同一版本要同步四处
+
+| 位置 | 当前值 | 作用 |
+| --- | --- | --- |
+| `package.json` 的 `version` | `1.1.4` | 安装器 / 皮肤市场读取的版本 |
+| `lib/client.js` 顶部 `BUILD` | `20261105-0345` | 排障时确认页面加载的是哪次构建 |
+| `#dsh-ds-bg` 的 `dataset.version` | `29` | 页面内快速确认（`document.getElementById('dsh-ds-bg').dataset.version`） |
+| `README.md` 性能小节标题 / `CHANGELOG.md` | `v1.1.4` | 文档与变更记录 |
+
+历史对照（详见 [CHANGELOG.md](./CHANGELOG.md)）：
+`1.0.0` 初版 → `1.1.0` 扫描调度器 → `1.1.1` 打字不冻结背景 + 单实例守卫 →
+`1.1.2` 首帧兜底 v1 → `1.1.3` BFS 深扫兜底 → `1.1.4` CSS 首帧修复（切会话黑块）。
+
+### 发布流程
+
+```bash
+cd dsh-official-skin
+
+# 1. 改版本号：package.json、client.js 的 BUILD、dataset.version、README / CHANGELOG
+# 2. 语法检查（没有构建步骤，client.js 就是产物）
+node --check lib/client.js
+
+# 3. 打包：产物进 release/（*.tgz 已被 .gitignore 忽略，不提交）
+npm pack --pack-destination release
+
+# 4. 记录校验和
+cd release
+sha256sum dsh-official-skin-<version>.tgz >> SHA256SUMS.txt
+cd ..
+
+# 5. 提交并打标签
+git add -A
+git commit -m "release: v<version>"
+git tag -a v<version> -m "v<version>"
+git push origin main --tags
+```
+
+### 回滚
+
+- **运行中出问题**：`cp .backup/client.js.bak-<时间戳> lib/client.js`，然后手动重启 DSH；
+- **代码回滚**：`git checkout v1.1.3 -- .`，或 `git checkout v1.1.3`；
+- **安装态回滚**：把 profile `package.json` 的依赖指回上一个 tag 的 GitHub 地址。
+
+### 升级宿主后的回归清单
+
+皮肤依赖部分宿主哈希类名（`.pI_x6G_*`、`.an3wZg_*` 等）。宿主升级后类名若变化，
+透明化规则会静默失效（回退成不透明背景，不会报错）。每次 DSH 升级后建议回归：
+
+1. 深色 / 浅色主题各切一次；
+2. 工作区与会话各切 3–5 次，确认无黑块、无阻塞；
+3. 打开设置对话框，确认页面不整块变黑；
+4. 控制台执行 `document.getElementById('dsh-ds-bg').dataset.version`，确认加载的是当前构建。
 
 ---
 
