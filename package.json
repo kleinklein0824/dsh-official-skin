@@ -37,6 +37,9 @@
   ],
   "license": "MIT",
   "author": "Klein",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kleinklein0824/dsh-official-skin.git"

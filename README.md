@@ -6,11 +6,11 @@
 
 <p>
   <img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg">
-  <img alt="platform" src="https://img.shields.io/badge/platform-DSH%20Web-6b7cff.svg">
+  <img alt="platform" src="https://img.shields.io/badge/platform-DSH%20Web%20%7C%20Desktop-6b7cff.svg">
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
 
-> **安装边界：** 当前仅声明支持 DSH Web `^0.2.1-rc.5`，在 `0.2.1-rc.5` 实机验证。npm 包尚未发布，官方 Desktop 尚未完成实机兼容验证；安装方式见[安装](#安装)。
+> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。npm 包已发布为 `dsh-official-skin@1.1.4`；安装方式见[安装](#安装)。
 
 ---
 
@@ -79,23 +79,39 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 | 项目 | 状态 |
 | --- | --- |
 | DSH Web | `^0.2.1-rc.5`；`0.2.1-rc.5` 实测通过 |
-| DSH Desktop | 未验证，不在当前兼容承诺内 |
-| npm | 尚未发布 |
+| DSH Desktop | `^0.2.1-rc.5`；桌面版内嵌 Web 界面实测可用 |
+| npm | `1.1.4` 已发布 |
 | Node.js | `>=20` |
 
 兼容范围同时写在 `package.json` 的 `engines.dsh` 中。当前版本低于 `0.2.1-rc.5`，或高于 `0.2.x` 时，安装器可能会拒绝加载。
 
-### 方式一：DSH Web 直接安装（推荐）
+### 方式一：DSH Desktop（推荐）
+
+打开 DSH Desktop 后进入 **插件 → 添加插件**，输入：
+
+```text
+dsh-official-skin@1.1.4
+```
+
+确认安装后，按应用提示启用插件，并完全退出、重新打开 DSH Desktop。
+
+如果当前桌面版的 npm 安装不可用，也可以改用：
+
+```text
+github:kleinklein0824/dsh-official-skin
+```
+
+### 方式二：DSH Web 直接安装
 
 终端执行：
 
 ```bash
-dsh plugin --profile web add "github:kleinklein0824/dsh-official-skin"
+dsh plugin --profile web add "dsh-official-skin@1.1.4"
 ```
 
 安装完成后刷新 DSH Web，或重新执行 `dsh web`。
 
-### 方式二：通过皮肤市场安装
+### 方式三：通过皮肤市场安装
 
 先安装并启用 [DSH 皮肤市场](https://github.com/kingOfSoySauce/dsh-skin-market)：
 
@@ -105,11 +121,11 @@ dsh plugin --profile web add "dsh-skin-market@latest"
 
 然后在 **设置 → 皮肤市场** 或 **插件 → dsh-skin-market** 中搜索 `DSH 官网风格皮肤`。市场条目固定到已收录的 GitHub commit，不依赖 npm 发布。
 
-### Desktop 与 npm 边界
+### 安装说明
 
-- **官方 Desktop：** 当前未验证。如需试用，只能在桌面应用的 **插件 → 添加插件** 中输入 `github:kleinklein0824/dsh-official-skin`，安装、启用和重启均按应用提示操作。
-- **npm：** 当前尚未发布，因此 `dsh plugin --profile web add "dsh-official-skin"` 和 `pnpm add dsh-official-skin` 都不可用。请使用上面的 GitHub 安装目标。
-- **平台：** 包内声明为 `dsh.client.platform = "web"`。即使通过 Desktop 的应用内 Web 层加载，也不等于已完成 Desktop 实机验收。
+- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.4`，安装、启用和重启均由桌面应用管理。
+- **npm：** 已发布到 npm，可通过包名 `dsh-official-skin` 安装；GitHub 安装目标继续保留，作为市场或固定 commit 安装的备用方式。
+- **平台：** 包内声明为 `dsh.client.platform = "web"`，DSH Desktop 使用同一套内嵌 Web 客户端加载皮肤，因此 Web 与 Desktop 共用客户端实现。
 
 ### 本地开发
 
@@ -197,7 +213,8 @@ dsh-official-skin/
 ## 兼容性
 
 - DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）实测通过；
-- DSH Desktop 与 npm 安装尚未验证，不包含在当前兼容承诺内；
+- DSH Desktop `^0.2.1-rc.5` 已实测可用，通过应用内嵌 Web 界面加载；
+- npm 包 `dsh-official-skin@1.1.4` 已发布；
 - 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用；
 - 深浅两套都按 `[data-ds-dark-theme]` 判断，不依赖 DSH 的哈希类名，因此小版本升级不容易失效。
 
