@@ -10,7 +10,7 @@
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
 
-> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。npm 包已发布为 `dsh-official-skin@1.1.5`；安装方式见[安装](#安装)。
+> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5 || ^0.2.2-rc.1`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。`0.2.1-rc.5` 已有实机验证；`0.2.2-rc.1` 的验证范围见[兼容性](#兼容性)。当前插件版本为 `1.1.6`；安装方式见[安装](#安装)。
 
 ---
 
@@ -20,7 +20,7 @@
 
 | 深色 · 深蓝宇宙感 | 浅色 · 官网 hero + 琉璃玻璃 |
 | :---: | :---: |
-| ![](docs/preview-dark.png) | ![](docs/preview-light.png) |
+| ![DSH 深色主题：流体极光、粒子鲸鱼与星座背景](docs/preview-dark.png) | ![DSH 浅色主题：蓝色渐变与玻璃质感](docs/preview-light.png) |
 | 深蓝渐变底 + 流体极光 + 粒子鲸鱼 + 星座网格 | 蓝色 hero 渐变 + 白色粒子鲸鱼 + 玻璃拟态面板 |
 
 ---
@@ -78,19 +78,19 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 
 | 项目 | 状态 |
 | --- | --- |
-| DSH Web | `^0.2.1-rc.5`；`0.2.1-rc.5` 实测通过 |
-| DSH Desktop | `^0.2.1-rc.5`；桌面版内嵌 Web 界面实测可用 |
-| npm | `1.1.5` 已发布 |
-| Node.js | `>=20` |
+| DSH Web | `^0.2.1-rc.5 || ^0.2.2-rc.1`；验证范围见[兼容性](#兼容性) |
+| DSH Desktop | 同上，通过桌面应用内嵌的 Web 界面加载 |
+| npm 包名 | `dsh-official-skin`；本版 `1.1.6` |
+| 插件 Node.js 要求 | `>=20`；运行 DSH `0.2.2-rc.1` CLI 时遵守宿主的 `>=24.9.0` 要求 |
 
-兼容范围同时写在 `package.json` 的 `engines.dsh` 中。当前版本低于 `0.2.1-rc.5`，或高于 `0.2.x` 时，安装器可能会拒绝加载。
+兼容范围同时写在 `package.json` 的 `engines.dsh` 中。低于 `0.2.1-rc.5` 或进入 `0.3.x` 的宿主不在声明范围内。DSH 和 dsh-market 会将预发布版本纳入兼容判断，因此旧版 `1.1.5` 的 `^0.2.1-rc.5` 也允许 `0.2.2-rc.1`；本版显式列出新版本线，避免其他工具按默认 SemVer 规则排除它。
 
 ### 方式一：DSH Desktop（推荐）
 
 打开 DSH Desktop 后进入 **插件 → 添加插件**，输入：
 
 ```text
-dsh-official-skin@1.1.5
+dsh-official-skin@1.1.6
 ```
 
 确认安装后，按应用提示启用插件，并完全退出、重新打开 DSH Desktop。
@@ -106,24 +106,30 @@ github:kleinklein0824/dsh-official-skin
 终端执行：
 
 ```bash
-dsh plugin --profile web add "dsh-official-skin@1.1.5"
+dsh plugin --profile web add "dsh-official-skin@1.1.6"
 ```
 
 安装完成后刷新 DSH Web，或重新执行 `dsh web`。
 
-### 方式三：通过皮肤市场安装
+### 方式三：通过 dsh-market 插件市场安装
 
-先安装并启用 [DSH 皮肤市场](https://github.com/kingOfSoySauce/dsh-skin-market)：
+安装并启用 [dsh-market](https://github.com/dsh-market/dsh-market)（npm 包名为 `dshmarket`）：
 
 ```bash
-dsh plugin --profile web add "dsh-skin-market@latest"
+dsh plugin --profile web add "dshmarket@latest"
 ```
 
-然后在 **设置 → 皮肤市场** 或 **插件 → dsh-skin-market** 中搜索 `DSH 官网风格皮肤`。市场条目固定到已收录的 GitHub commit，不依赖 npm 发布。
+打开 **插件市场 → 发现** 或 **主题**，搜索 `dsh-official-skin`，安装或更新后按宿主提示重新加载。
+
+- dsh-market 已将本仓库关联到 npm 包 `dsh-official-skin`，会优先从 npm 安装；仅推送 GitHub 不会更新市场用户安装到的 npm 包。
+- 市场卡片预览图由仓库根目录的 `screenshots.json` 声明，依次展示深色、浅色效果。更新图片后等待目录下一次构建，并在市场刷新；不需要重新申请收录。
+- 市场短介绍来自 awesome-dsh-plugin 中本插件的 YAML 条目，独立于本 README；更正短介绍需要提交只修改该条目的更新 PR。
+
+也可继续使用 [DSH 皮肤市场](https://github.com/kingOfSoySauce/dsh-skin-market)（`dsh-skin-market`）。该市场与 dsh-market 是两个独立插件，安装来源和更新方式以各自条目为准。
 
 ### 安装说明
 
-- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.5`，安装、启用和重启均由桌面应用管理。
+- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.6`，安装、启用和重启均由桌面应用管理。
 - **npm：** 已发布到 npm，可通过包名 `dsh-official-skin` 安装；GitHub 安装目标继续保留，作为市场或固定 commit 安装的备用方式。
 - **平台：** 包内声明为 `dsh.client.platform = "web"`，DSH Desktop 使用同一套内嵌 Web 客户端加载皮肤，因此 Web 与 Desktop 共用客户端实现。
 
@@ -170,6 +176,7 @@ dsh-official-skin/
 ├─ docs/
 │  ├─ preview-dark.png
 │  └─ preview-light.png
+├─ screenshots.json      # dsh-market 展示的深浅色预览图清单
 ├─ README.md
 ├─ CHANGELOG.md          # 版本变更记录（语义化版本）
 ├─ LICENSE
@@ -212,11 +219,11 @@ dsh-official-skin/
 
 ## 兼容性
 
-- DSH Web `^0.2.1-rc.5` 为声明范围，其中 `0.2.1-rc.5`（Electron 44 / 同版本 Chromium）实测通过；
-- DSH Desktop `^0.2.1-rc.5` 已实测可用，通过应用内嵌 Web 界面加载；
-- npm 包 `dsh-official-skin@1.1.5` 已发布；
-- 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用；
-- 深浅两套都按 `[data-ds-dark-theme]` 判断，不依赖 DSH 的哈希类名，因此小版本升级不容易失效。
+- 声明范围：DSH Web / Desktop `^0.2.1-rc.5 || ^0.2.2-rc.1`。`0.2.1-rc.5` 已有实机验证，Desktop 使用同一套内嵌 Web 客户端。
+- `0.2.2-rc.1`：已核对宿主兼容检查、模块加载器、主题服务、主题属性和按钮插槽；并在 Chromium 夹具中检查加载、深浅色切换和重复加载。这不等同于完整 DSH Web / Desktop 场景回归，升级后仍应检查会话切换、输入框与其他插件面板。
+- 当前版本及具体证据见 [兼容性核对记录](docs/compatibility.md)。
+- 需要 **WebGL2**（极光与鲸鱼）；不可用时自动降级为纯 CSS 背景，界面仍可用。
+- 主题判断与主要定位优先使用 `[data-ds-dark-theme]`、`[data-slot]` 等属性；部分视觉修补仍使用宿主的哈希类名，因此宿主升级后仍需检查实际显示效果。
 
 ---
 
