@@ -10,7 +10,7 @@
   <img alt="render" src="https://img.shields.io/badge/render-WebGL2-000000.svg">
 </p>
 
-> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5 || ^0.2.2-rc.1`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。`0.2.1-rc.5` 已有实机验证；`0.2.2-rc.1` 的验证范围见[兼容性](#兼容性)。当前插件版本为 `1.1.6`；安装方式见[安装](#安装)。
+> **兼容范围：** 支持 DSH Web 与 DSH Desktop `^0.2.1-rc.5 || ^0.2.2-rc.1`。DSH Desktop 通过应用内嵌的 Web 界面加载本皮肤。`0.2.1-rc.5` 已有实机验证；`0.2.2-rc.1` 的验证范围见[兼容性](#兼容性)。当前插件版本为 `1.1.7`；安装方式见[安装](#安装)。
 
 ---
 
@@ -80,7 +80,7 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 | --- | --- |
 | DSH Web | `^0.2.1-rc.5 || ^0.2.2-rc.1`；验证范围见[兼容性](#兼容性) |
 | DSH Desktop | 同上，通过桌面应用内嵌的 Web 界面加载 |
-| npm 包名 | `dsh-official-skin`；本版 `1.1.6` |
+| npm 包名 | `dsh-official-skin`；本版 `1.1.7` |
 | 插件 Node.js 要求 | `>=20`；运行 DSH `0.2.2-rc.1` CLI 时遵守宿主的 `>=24.9.0` 要求 |
 
 兼容范围同时写在 `package.json` 的 `engines.dsh` 中。低于 `0.2.1-rc.5` 或进入 `0.3.x` 的宿主不在声明范围内。DSH 和 dsh-market 会将预发布版本纳入兼容判断，因此旧版 `1.1.5` 的 `^0.2.1-rc.5` 也允许 `0.2.2-rc.1`；本版显式列出新版本线，避免其他工具按默认 SemVer 规则排除它。
@@ -90,7 +90,7 @@ DSH 原生界面是一套规整的灰白 / 深灰配色。这个插件在**不�
 打开 DSH Desktop 后进入 **插件 → 添加插件**，输入：
 
 ```text
-dsh-official-skin@1.1.6
+dsh-official-skin@1.1.7
 ```
 
 确认安装后，按应用提示启用插件，并完全退出、重新打开 DSH Desktop。
@@ -106,7 +106,7 @@ github:kleinklein0824/dsh-official-skin
 终端执行：
 
 ```bash
-dsh plugin --profile web add "dsh-official-skin@1.1.6"
+dsh plugin --profile web add "dsh-official-skin@1.1.7"
 ```
 
 安装完成后刷新 DSH Web，或重新执行 `dsh web`。
@@ -129,7 +129,7 @@ dsh plugin --profile web add "dshmarket@latest"
 
 ### 安装说明
 
-- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.6`，安装、启用和重启均由桌面应用管理。
+- **DSH Desktop：** 使用应用内 **插件 → 添加插件** 安装 `dsh-official-skin@1.1.7`，安装、启用和重启均由桌面应用管理。
 - **npm：** 已发布到 npm，可通过包名 `dsh-official-skin` 安装；GitHub 安装目标继续保留，作为市场或固定 commit 安装的备用方式。
 - **平台：** 包内声明为 `dsh.client.platform = "web"`，DSH Desktop 使用同一套内嵌 Web 客户端加载皮肤，因此 Web 与 Desktop 共用客户端实现。
 
@@ -243,6 +243,8 @@ Chromium 对同时存在的 WebGL 上下文有上限。本插件已在重载时�
 ## 性能与稳定性
 
 - 切换会话和工作区时优先保证首帧显示，避免不透明底板短暂盖住背景。
+- 新建会话时统一主题按钮的显示来源，避免右上角出现两个按钮；插槽注册失败时保留 DOM 按钮兜底。
+- 会话或模块切换时短暂停止背景绘制，600ms 后自动恢复；入场结束后撤销临时图层提示，减少持续合成开销。
 - 深度界面扫描分帧执行，聊天流式输出时不会因反复全量扫描而明显卡顿。
 - 弹窗打开时暂停背景动画，关闭后自动恢复。
 - 输入框玻璃模糊移到独立图层，鼠标停在发送键上时不再持续闪烁。
